@@ -28,7 +28,7 @@ const CreatePrediciton = () => {
       <h1 className="text-2xl font-bold mt-4 text-blue-500">
         Create new Price Prediction Contract
       </h1>
-      <form className="mt-8">
+      <form className="mt-8 flex flex-col w-1/2 mr-auto">
         <input
           className="bg-gray-200 shadow-inner rounded-l p-2 mb-4"
           id="email"
@@ -37,10 +37,10 @@ const CreatePrediciton = () => {
           placeholder="Enter your email address"
         />
         <button
-          className="bg-blue-600 hover:bg-blue-700 duration-300 text-white shadow p-2 rounded-r mb-4"
+          className="rounded-xl w-1/2 mb-8 bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white px-4 py-2 duration-300"
           type="submit"
         >
-          Sign Up
+          Create Price Prediction
         </button>
       </form>
     </div>
