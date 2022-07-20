@@ -4,10 +4,11 @@ import "../styles/globals.css";
 import Header from "../components/Header";
 
 import { MoralisProvider } from "react-moralis";
+import { NotificationProvider } from "web3uikit";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <div className="container bg-gradient-to-r from-indigo-500 h-screen pt-8 ">
+    <div className=" bg-primary h-screen  ">
       <Head>
         <title>Jelly Prophet App</title>
         <meta
@@ -18,8 +19,12 @@ function MyApp({ Component, pageProps }) {
       </Head>
 
       <MoralisProvider initializeOnMount={false}>
-        <Header />
-        <Component {...pageProps} />
+        <NotificationProvider>
+          <div className="container ">
+            <Header />
+            <Component {...pageProps} />
+          </div>
+        </NotificationProvider>
       </MoralisProvider>
     </div>
   );

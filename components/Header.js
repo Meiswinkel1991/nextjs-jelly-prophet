@@ -6,19 +6,24 @@ const Header = () => {
   const router = useRouter();
 
   return (
-    <div className="w-full mx-8 bg-white shadow-lg rounded-xl flex mt-8 items-center py-4 pl-4 justify-between">
-      <div className="text-4xl font-bold text-blue-500">
-        Jelly Prophet Project
-      </div>
+    <div className="w-full border-b border-secondary flex pt-4 items-center px-4 justify-between">
       <div className="flex">
-        <button className="rounded-xl bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white px-4 py-2  ">
-          <Link href="/">Buy Prediction Token</Link>
-        </button>
-        <button className="rounded-xl bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white px-4 py-2 ml-4 ">
-          <Link href="/create-prediction">Create Prediction</Link>
-        </button>
-        <ConnectButton moralisAuth={false} />
+        <div className="text-xl font-bold text-transparent  bg-clip-text bg-gradient-to-r from-jellyblue to-jellypink">
+          Jelly Prophet Project
+        </div>
+        <div className="flex ml-4">
+          <button className="rounded-lg  hover:bg-btngrey  text-white px-2 mr-2  ">
+            <Link href="/">Dashboard</Link>
+          </button>
+          <button className="rounded-lg  hover:bg-btngrey  text-white px-2  mr-2  ">
+            <Link href="/create-prediction">Price Predictions</Link>
+          </button>
+          <button className="rounded-lg  hover:bg-btngrey  text-white px-2 mr-2  ">
+            <Link href="/create-prediction">More</Link>
+          </button>
+        </div>
       </div>
+      <ConnectButton moralisAuth={false} />
     </div>
   );
 };

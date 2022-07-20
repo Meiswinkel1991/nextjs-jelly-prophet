@@ -9,7 +9,7 @@ import {
 } from "../constants";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 
-const UNDERLYINGS = ["ETH"];
+import PopOver from "../components/PopOver";
 
 const CreatePrediciton = () => {
   const [managerContractAddress, setManagerContractAddress] = useState("");
@@ -17,11 +17,15 @@ const CreatePrediciton = () => {
   const [maxDelta, setMaxDelta] = useState("0");
   const [duration, setDuration] = useState("0");
   const [priceFeedAddress, setPriceFeedAddress] = useState("0x");
+  const [activeUnderlying, setActiveUnderlying] = useState("");
+  const [acceptedChain, setAcceptedChain] = useState(false);
 
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
   const chainId = parseInt(chainIdHex);
   const priceFeeds =
     chainId in priceFeedAddresses ? priceFeedAddresses[chainId] : null;
+
+  const dispatch = useNotification();
 
   // Contract Functions
 
@@ -36,51 +40,92 @@ const CreatePrediciton = () => {
     params: { maxDelta, duration, priceFeedAddress },
   });
 
-  const updateUi = () => {};
+  const handleCreatePrediction = async () => {
+    const newPriceFeedAddress = priceFeeds[activeUnderlying];
+    setPriceFeedAddress(newPriceFeedAddress);
+    console.log(newPriceFeedAddress);
+  };
+
+  const updateUi = (chainId) => {
+    if (chainId in contractAddresses) {
+      const _acceptedChain = true;
+      setAcceptedChain(_acceptedChain);
+    } else {
+      const _acceptedChain = false;
+      setAcceptedChain(_acceptedChain);
+    }
+  };
 
   useEffect(() => {
     if (isWeb3Enabled) {
-      console.log(chainId);
-      updateUi();
+      updateUi(chainId);
     }
+    console.log(chainId);
   }, [isWeb3Enabled]);
 
-  return (
-    <div className="container mt-8 ml-8 shadow-lg rounded-lg bg-white w-3/4 px-4 ">
-      <h1 className="text-2xl font-bold mt-4 text-blue-500">
-        Create new Price Prediction Contract
-      </h1>
-      <form className="mt-8 flex flex-col w-1/2 mr-auto">
-        <div className="flex ">
-          <label className="text-blue-500 mr-4 text-xl font-semibold w-1/2">
-            Prediction Duration
-          </label>
-          <input
-            className="bg-gray-200 shadow-inner rounded-l p-2 mb-4"
-            placeholder="Enter the duration of the prediction"
-            onChange={(event) => setDuration(event.target.value)}
-            value={duration}
-          />
-        </div>
-        <div className="flex">
-          <label className="text-blue-500 mr-4 text-xl font-semibold w-1/2">
-            Maximum Delta
-          </label>
-          <input
-            className="bg-gray-200 shadow-inner rounded-l p-2 mb-4"
-            placeholder="Enter the duration of the prediction"
-            value={maxDelta}
-            onChange={(event) => setMaxDelta(event.target.value)}
-          />
-        </div>
+  const handleSuccess = async (tx) => {
+    await tx.wait(1);
+    handleNewNotification(tx);
+  };
 
-        <button
-          className="rounded-xl w-1/2 mb-8 bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white px-4 py-2 duration-300"
-          type="submit"
-        >
-          Create Price Prediction
-        </button>
-      </form>
+  const handleNewNotification = () => {
+    dispatch({
+      type: "info",
+      message: "Transaction complete!",
+      title: "Tx Notification",
+      position: "topR",
+      icon: "bell",
+    });
+  };
+
+  return (
+    <div className="mx-auto w-1/4 mt-8">
+      <div className=" shadow-lg rounded-lg bg-secondary  px-4 ">
+        {acceptedChain ? (
+          <div className="mt-8 w-3/4 mx-auto">
+            <h1 className="text-2xl font-bold pt-4 text-white mb-8">
+              New Price Prediction
+            </h1>
+            <PopOver
+              setActiveUnderlying={setActiveUnderlying}
+              activeUnderlying={activeUnderlying}
+            />
+            <div className="text-lg ">
+              <label className="text-white mr-4 ">Prediction Duration</label>
+              <input
+                className="bg-jellygrey shadow-inner rounded-lg p-2 mb-4"
+                placeholder="Enter the duration of the prediction"
+                onChange={(event) => setDuration(event.target.value)}
+                value={duration}
+              />
+            </div>
+            <div className="">
+              <label className="text-white mr-4 ">Maximum Delta</label>
+              <input
+                className="bg-jellygrey shadow-inner rounded-lg p-2 mb-4"
+                placeholder="Enter the duration of the prediction"
+                value={maxDelta}
+                onChange={(event) => setMaxDelta(event.target.value)}
+              />
+            </div>
+
+            <button
+              onClick={async () => {
+                handleCreatePrediction();
+              }}
+              className="rounded-xl  mb-4 bg-btngrey border-2 border-primary  hover:bg-primary hover:border-white text-white px-4 py-2 duration-300"
+            >
+              Create Price Prediction
+            </button>
+          </div>
+        ) : (
+          <div className="mt-8 w-3/4 mx-auto">
+            <h1 className="text-xl font-bold pt-4 text-white mb-8 pb-8">
+              Please choose the right Network!
+            </h1>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
