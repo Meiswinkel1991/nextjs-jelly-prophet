@@ -1,10 +1,7 @@
 import { ConnectButton } from "web3uikit";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 const Header = () => {
-  const router = useRouter();
-
   return (
     <div className="w-full border-b border-secondary flex pt-4 items-center px-4 justify-between">
       <div className="flex">
@@ -16,7 +13,7 @@ const Header = () => {
             <Link href="/">Dashboard</Link>
           </button>
           <button className="rounded-lg  hover:bg-btngrey  text-white px-2  mr-2  ">
-            <Link href="/create-prediction">Price Predictions</Link>
+            <Link href="/price-predictions">Price Predictions</Link>
           </button>
           <button className="rounded-lg  hover:bg-btngrey  text-white px-2 mr-2  ">
             <Link href="/create-prediction">More</Link>
