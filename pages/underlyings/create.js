@@ -6,11 +6,11 @@ import {
   optionTokenFactoryAbi,
   contractAddresses,
   priceFeedAddresses,
-} from "../../../constants";
+} from "../../constants";
 
 import { useMoralis, useWeb3Contract } from "react-moralis";
 
-import PopOver from "../../../components/PopOver";
+import PopOver from "../../components/PopOver";
 
 const CreatePrediciton = () => {
   const [managerContractAddress, setManagerContractAddress] = useState("");
