@@ -13,10 +13,10 @@ const Header = () => {
             <Link href="/">Dashboard</Link>
           </button>
           <button className="rounded-lg  hover:bg-btngrey  text-white px-2  mr-2  ">
-            <Link href="/price-predictions">Price Predictions</Link>
+            <Link href="/underlyings">Underlyings</Link>
           </button>
           <button className="rounded-lg  hover:bg-btngrey  text-white px-2 mr-2  ">
-            <Link href="/create-prediction">More</Link>
+            <Link href="#">More</Link>
           </button>
         </div>
       </div>

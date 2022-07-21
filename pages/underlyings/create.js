@@ -6,10 +6,11 @@ import {
   optionTokenFactoryAbi,
   contractAddresses,
   priceFeedAddresses,
-} from "../constants";
+} from "../../../constants";
+
 import { useMoralis, useWeb3Contract } from "react-moralis";
 
-import PopOver from "../components/PopOver";
+import PopOver from "../../../components/PopOver";
 
 const CreatePrediciton = () => {
   const [managerContractAddress, setManagerContractAddress] = useState("");
@@ -20,6 +21,8 @@ const CreatePrediciton = () => {
   const [activeUnderlying, setActiveUnderlying] = useState("");
   const [acceptedChain, setAcceptedChain] = useState(false);
 
+  //Moralis Hooks
+
   const { chainId: chainIdHex, isWeb3Enabled } = useMoralis();
   const chainId = parseInt(chainIdHex);
   const priceFeeds =
@@ -29,24 +32,24 @@ const CreatePrediciton = () => {
 
   // Contract Functions
 
-  const {
-    runContractFunction: createOption,
-    isFetching,
-    isLoading,
-  } = useWeb3Contract({
-    abi: optionManagerAbi,
-    functionName: "createOption",
-    contractAddress: managerContractAddress,
-    params: { maxDelta, duration, priceFeedAddress },
-  });
+  const { data, error, runContractFunction, isFetching, isLoading } =
+    useWeb3Contract();
 
   const handleCreatePrediction = async () => {
-    const newPriceFeedAddress = priceFeeds[activeUnderlying];
-    setPriceFeedAddress(newPriceFeedAddress);
-    console.log(newPriceFeedAddress);
+    const options = {
+      abi: optionManagerAbi,
+      contractAddress: managerContractAddress,
+      functionName: "createOption",
+      params: { maxDelta, duration, priceFeedAddress },
+    };
+    await runContractFunction({
+      params: options,
+      onSuccess: handleSuccess,
+      onError: (error) => console.log(error),
+    });
   };
 
-  const updateUi = (chainId) => {
+  const updateUi = () => {
     if (chainId in contractAddresses) {
       const _acceptedChain = true;
       setAcceptedChain(_acceptedChain);
@@ -54,14 +57,40 @@ const CreatePrediciton = () => {
       const _acceptedChain = false;
       setAcceptedChain(_acceptedChain);
     }
+    getOwner();
+  };
+
+  //contract view functions
+  const getOwner = async () => {
+    const newContractAddress = contractAddresses[chainId]["optionManager"];
+
+    setManagerContractAddress(newContractAddress);
+
+    const options = {
+      abi: optionManagerAbi,
+      contractAddress: managerContractAddress,
+      functionName: "owner",
+    };
+
+    const owner = await runContractFunction({
+      params: options,
+      onError: (error) => console.log(error),
+    });
+    console.log("the owner is:", owner);
   };
 
   useEffect(() => {
     if (isWeb3Enabled) {
-      updateUi(chainId);
+      const newPriceFeedAddress = priceFeeds[activeUnderlying];
+      const newContractAddress = contractAddresses[chainId]["optionManager"];
+      setPriceFeedAddress(newPriceFeedAddress);
+      setManagerContractAddress(newContractAddress);
+      updateUi();
+
+      console.log("price feed:", priceFeedAddress);
+      console.log("manager Contract:", managerContractAddress);
     }
-    console.log(chainId);
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, chainIdHex]);
 
   const handleSuccess = async (tx) => {
     await tx.wait(1);
